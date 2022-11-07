@@ -1,0 +1,173 @@
+basePath: /
+definitions:
+  main.Answer:
+    properties:
+      answer_text:
+        example: Text of answer item
+        type: string
+      id:
+        example: 1
+        type: integer
+      is_true:
+        type: boolean
+      question_id:
+        type: integer
+    type: object
+  main.AnswerCreate:
+    properties:
+      answer_text:
+        example: Text of answer item
+        type: string
+      is_true:
+        type: boolean
+    type: object
+  main.Category:
+    properties:
+      id:
+        example: 1
+        type: integer
+      name:
+        example: Category name
+        type: string
+    type: object
+  main.CategoryCreate:
+    properties:
+      name:
+        example: Category name
+        type: string
+    type: object
+  main.ErrorResponse:
+    properties:
+      message:
+        example: Error message
+        type: string
+    type: object
+  main.Question:
+    properties:
+      answers:
+        items:
+          $ref: '#/definitions/main.Answer'
+        type: array
+      category_id:
+        type: integer
+      id:
+        example: 1
+        type: integer
+      question_text:
+        type: string
+    type: object
+  main.QuestionCreate:
+    properties:
+      answers:
+        items:
+          $ref: '#/definitions/main.AnswerCreate'
+        type: array
+      category_id:
+        type: integer
+      question_text:
+        example: Text of question
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  title: SkyLab test application API
+  version: 1.0.0
+paths:
+  /quiz/category:
+    get:
+      description: Search all categories in database and return in JSON
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/main.Category'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/main.ErrorResponse'
+      summary: Get all categories
+      tags:
+      - Quiz
+    post:
+      consumes:
+      - application/json
+      description: Add category in database (JSON body) and return in JSON
+      parameters:
+      - description: Request body example
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/main.CategoryCreate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/main.Category'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/main.ErrorResponse'
+      summary: Add category
+      tags:
+      - Quiz
+  /quiz/question:
+    post:
+      consumes:
+      - application/json
+      description: Add question and answers in database (JSON body) and return in
+        JSON
+      parameters:
+      - description: Request body example
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/main.QuestionCreate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/main.Question'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/main.ErrorResponse'
+      summary: Add question and answers
+      tags:
+      - Quiz
+  /quiz/question/{id}:
+    get:
+      description: Search all questions by category ID in database and return in JSON
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/main.Question'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/main.ErrorResponse'
+      summary: Get questions by category ID
+      tags:
+      - Quiz
+swagger: "2.0"
