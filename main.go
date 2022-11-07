@@ -13,7 +13,7 @@ import (
 
 // @title SkyLab test application API
 // @version 1.0.0
-// @host localhost:8080
+// @host 159.223.220.58:8080
 // @BasePath /
 func main() {
 	if err := initConfig(); err != nil {
