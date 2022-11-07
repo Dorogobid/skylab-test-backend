@@ -1,7 +1,7 @@
 package main
 
 import (
-	_ "github.com/dorogobid/skylab-test-backend/docs"
+	"github.com/dorogobid/skylab-test-backend/docs"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -20,6 +20,7 @@ func main() {
 		panic("Error initializing configs")
 	}
 
+	docs.SwaggerInfo.Host = viper.GetString("host") + viper.GetString("port")
 	db := &DBManager{}
 	db.ConnectToDb(getConfig())
 
@@ -35,6 +36,7 @@ func main() {
 
 	e.GET("/quiz/question/:category_id", h.GetQuestionsByCategoryID)
 	e.POST("/quiz/question", h.AddQuestion)
+	e.POST("/quiz/questions/upload", h.UploadQuestions)
 
 	e.GET("/api/docs/*", echoSwagger.WrapHandler)
 

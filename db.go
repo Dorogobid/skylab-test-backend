@@ -23,6 +23,7 @@ type DBManagerInterface interface {
 	GetQuestionsByCategoryIDFromDB(categoryID int) []Question
 	AddCategoryToDB(categoryCreate CategoryCreate) (*Category, error)
 	AddQuestionToDB(questionCreate QuestionCreate) (*Question, error)
+	LoadQuestionsFromJSON(questionsCreate []QuestionCreate) error
 }
 
 type DBManager struct {
@@ -75,4 +76,19 @@ func (db *DBManager) AddQuestionToDB(questionCreate QuestionCreate) (*Question, 
 	question := &Question{QuestionText: questionCreate.QuestionText, Answers: answers, CategoryID: questionCreate.CategoryID}
 	result := db.db.Create(&question)
 	return question, result.Error
+}
+
+func (db *DBManager) LoadQuestionsFromJSON(questionsCreate []QuestionCreate) error {
+	var answers []Answer
+	var questions []Question
+	for _, question := range questionsCreate {
+		answers = nil
+		for _, answer := range question.Answers {
+			answers = append(answers, Answer{AnswerText: answer.AnswerText, IsTrue: answer.IsTrue})
+		}
+		questions = append(questions, Question{QuestionText: question.QuestionText, Answers: answers, CategoryID: question.CategoryID})
+	}
+
+	result := db.db.Create(&questions)
+	return result.Error
 }

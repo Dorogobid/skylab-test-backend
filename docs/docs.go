@@ -160,6 +160,44 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/quiz/questions/upload": {
+            "post": {
+                "description": "IUpload questions from JSON file to database",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "multipart/form-data"
+                ],
+                "tags": [
+                    "Quiz"
+                ],
+                "summary": "Upload questions from JSON file",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "Choose JSON file",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/main.SucsessResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/main.ErrorResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -263,6 +301,15 @@ const docTemplate = `{
                     "example": "Text of question"
                 }
             }
+        },
+        "main.SucsessResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "example": "Sucsess message"
+                }
+            }
         }
     }
 }`
@@ -270,7 +317,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0.0",
-	Host:             "localhost:8080",
+	Host:             "159.223.220.58:8080",
 	BasePath:         "/",
 	Schemes:          []string{},
 	Title:            "SkyLab test application API",

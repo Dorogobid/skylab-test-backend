@@ -68,7 +68,13 @@ definitions:
         example: Text of question
         type: string
     type: object
-host: localhost:8080
+  main.SucsessResponse:
+    properties:
+      message:
+        example: Sucsess message
+        type: string
+    type: object
+host: 159.223.220.58:8080
 info:
   contact: {}
   title: SkyLab test application API
@@ -168,6 +174,31 @@ paths:
           schema:
             $ref: '#/definitions/main.ErrorResponse'
       summary: Get questions by category ID
+      tags:
+      - Quiz
+  /quiz/questions/upload:
+    post:
+      consumes:
+      - multipart/form-data
+      description: IUpload questions from JSON file to database
+      parameters:
+      - description: Choose JSON file
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - multipart/form-data
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/main.SucsessResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/main.ErrorResponse'
+      summary: Upload questions from JSON file
       tags:
       - Quiz
 swagger: "2.0"

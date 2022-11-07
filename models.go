@@ -37,3 +37,7 @@ type AnswerCreate struct {
 type ErrorResponse struct {
 	Message string `json:"message" example:"Error message"`
 }
+
+type SucsessResponse struct {
+	Message string `json:"message" example:"Sucsess message"`
+}

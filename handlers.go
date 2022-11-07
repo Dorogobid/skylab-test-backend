@@ -1,6 +1,9 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
+	"io"
 	"net/http"
 	"strconv"
 
@@ -12,6 +15,7 @@ type HandlerInterface interface {
 	AddCategory(c echo.Context) error
 	GetQuestionsByCategoryID(c echo.Context) error
 	AddQuestion(c echo.Context) error
+	UploadQuestions(c echo.Context) error
 }
 
 type Handler struct {
@@ -103,4 +107,42 @@ func (h *Handler) AddQuestion(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, errResp)
 	}
 	return c.JSON(http.StatusOK, question)
+}
+
+// UploadQuestions ... Upload questions from JSON file
+// @Summary Upload questions from JSON file
+// @Description IUpload questions from JSON file to database
+// @Tags Quiz
+// @Accept mpfd
+// @Produce mpfd
+// @Param file formData file true "Choose JSON file"
+// @Success 200 {object} SucsessResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /quiz/questions/upload [post]
+func (h *Handler) UploadQuestions(c echo.Context) error {
+	file, err := c.FormFile("file")
+	if err != nil {
+		return err
+	}
+
+	questionsFile, err := file.Open()
+	if err != nil {
+		return err
+	}
+	defer questionsFile.Close()
+	byteValue, _ := io.ReadAll(questionsFile)
+
+	questions := []QuestionCreate{}
+	if err := json.Unmarshal(byteValue, &questions); err != nil {
+		errResp := ErrorResponse{Message: err.Error()}
+		return c.JSON(http.StatusInternalServerError, errResp)
+	}
+
+	if err := h.db.LoadQuestionsFromJSON(questions); err != nil {
+		errResp := ErrorResponse{Message: err.Error()}
+		return c.JSON(http.StatusInternalServerError, errResp)
+	}
+
+	sucsResp := SucsessResponse{Message: fmt.Sprintf("File %s uploaded successfully", file.Filename)}
+	return c.JSON(http.StatusOK, sucsResp)
 }
